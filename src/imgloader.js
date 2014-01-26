@@ -5,24 +5,24 @@
 		window.ImgLoader = {};
 	}
 
-	//TODO : Add options to search only a part of the DOM, 
-	//		 Add option to load images from css (and from pseudo states)
-	//		 Add option to load other images too (that could be loaded rfom js later on for example)
 	var settings = ImgLoader.settings = {
+		loadImgTags : true,
+		loadBackgroundImages : false,
+
+		loadContext : null,
+
+		loadItems : null,
+
 		itemLoaded : null,
 		itemError : null,
-		itemsCompleted : null
+		itemsCompleted : null,
 	};
 
-	ImgLoader.configure = function(options) {
-		$.extend(settings, options);
-		return this;
-	};
-
-	ImgLoader.loadImages = function() {
-
+	ImgLoader.loadImages = function(options) {
 		var itemsLoadedCount = 0,
-		itemsCount = 0;
+			itemsCount = 0;
+
+		$.extend(settings, options);
 
 		var onImageLoad = function() {
 			itemsLoadedCount++;
@@ -50,20 +50,55 @@
 			}
 		};
 
-		var toLoad = [];
-
-		$('img[src]').each(function() {
-			toLoad.push($(this).attr('src'));
-		});
+		var toLoad = this.getImages();
 
 		itemsCount = toLoad.length;
 
 		for(var i=0; i<itemsCount; i++) {
 			$("<img/>")
-			.load(onImageLoad)
-			.error(onImageError)
-			.attr("src", toLoad[i]);
+				.load(onImageLoad)
+				.error(onImageError)
+				.attr("src", toLoad[i]);
 		}
+	};
+
+	ImgLoader.getImages = function() {
+		var images = [];
+
+		//Load <img> tags from the page
+		if(settings.loadImgTags) {
+			$('img[src]', settings.loadContext).each(function() {
+				images.push($(this).attr('src'));
+			});
+		}
+
+		//Load background images when there are some
+		//TODO: Multiple backgrounds
+		if(settings.loadBackgroundImages) {
+			$('*', settings.loadContext).each(function() {
+				var elmBg = $(this).css('background-image'),
+					bgUrl;
+				if(elmBg !== '' && elmBg !== 'none') {
+					bgUrl = elmBg.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
+					images.push(bgUrl);
+				}	
+			});
+		}
+
+		//Load extra items passed by the user. Should be an array but accept a single string too
+		if(settings.loadItems) {
+			var extraItems = settings.loadItems;
+			if (typeof extraItems == 'string' || extraItems instanceof String) {
+				extraItems = [ extraItems ];
+			}
+			if (extraItems instanceof Array) {
+				for(var i=0; i<extraItems.length; i++) {
+					images.push(extraItems[i]);
+				}
+			}
+		}
+
+		return images;
 	};
 
 })(window, jQuery, undefined);
