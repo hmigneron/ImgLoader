@@ -60,6 +60,11 @@
         singleItemCallback = settings.itemCompletedCallback || $.noop;
         allItemsCallback = settings.itemsCompletedCallback || $.noop;
 
+        //Nothing to load -- bail
+        if(allItemsCount === 0) {
+            allItemsCallback();
+            return;
+        }
 
         for(var i=0; i<allItemsCount; i++) {
 
