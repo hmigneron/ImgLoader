@@ -1,99 +1,138 @@
 //requires jQuery
 (function(window, $) {
+    'use strict';
 
-	if(!window.ImgLoader) {
-		window.ImgLoader = {};
-	}
+    //Quick polyfill for Object.keys in IE < 9
+    if (!Object.keys) {
+        Object.keys = function (obj) {
+            var keys = [],
+                k;
+            for (k in obj) {
+                if (Object.prototype.hasOwnProperty.call(obj, k)) {
+                    keys.push(k);
+                }
+            }
+            return keys;
+        };
+    }
 
-	var settings = ImgLoader.settings = {
-		loadImgTags : true,
-		loadBackgroundImages : false,
+    if(!window.ImgLoader) {
+        window.ImgLoader = {};
+    }
 
-		loadContext : null,
+    //Options
+    var settings = ImgLoader.settings = {
 
-		loadItems : null,
+        //Decides if <img> tags are loaded automatically
+        loadImgTags : true,
+        
+        //Decides if elements that have background images are loaded automatically
+        loadBackgroundImages : true,
 
-		itemLoaded : null,
-		itemError : null,
-		itemsCompleted : null,
-	};
+        //Array of images that need to be loaded
+        loadItems : null,
 
-	ImgLoader.loadImages = function(options) {
-		var itemsLoadedCount = 0,
-			itemsCount = 0;
+        //Selector or DOM element that decides the context in which the images are loaded
+        //Ignored if loadImgTags and loadBackgroundImages are both set to false
+        loadContext : null,
 
-		$.extend(settings, options);
+        //Callback for when an image is loaded (whether it fails or succeeds)
+        itemCompletedCallback : null,
 
-		var onImageLoad = function() {
-			itemsLoadedCount++;
-			if(settings.itemLoaded !== null && typeof settings.itemLoaded === 'function') {
-				settings.itemLoaded(itemsLoadedCount / itemsCount);
-			}
+        //Callback for when all the items have been loaded.
+        itemsCompletedCallback : null,
+    };
 
-			if(itemsLoadedCount === itemsCount) {
-				if(settings.itemsCompleted !== null && typeof settings.itemsCompleted === 'function') {
-					settings.itemsCompleted();
-				}
-			}
-		}
 
-		var onImageError = function() {
-			itemsLoadedCount++;
-			if(settings.itemError !== null && typeof settings.itemError === 'function') {
-				settings.itemError(itemsLoadedCount / itemsCount);
-			}
+    ImgLoader.loadImages = function(options) {
+        $.extend(settings, options);
 
-			if(itemsLoadedCount === itemsCount) {
-				if(settings.itemsCompleted !== null && typeof settings.itemsCompleted === 'function') {
-					settings.itemsCompleted();
-				}
-			}
-		};
+        var itemsLoaded = 0,
+            allItemsCount,
+            singleItemCallback,
+            allItemsCallback;
 
-		var toLoad = this.getImages();
 
-		itemsCount = toLoad.length;
+        var imagesToLoad = Object.keys(this.getImages());
+         
+        allItemsCount = imagesToLoad.length;
 
-		for(var i=0; i<itemsCount; i++) {
-			$("<img/>")
-				.load(onImageLoad)
-				.error(onImageError)
-				.attr("src", toLoad[i]);
-		}
-	};
+        singleItemCallback = settings.itemCompletedCallback || $.noop;
+        allItemsCallback = settings.itemsCompletedCallback || $.noop;
 
-	ImgLoader.getImages = function() {
-		var images = [];
 
-		//Load <img> tags from the page
-		if(settings.loadImgTags) {
-			$('img[src]', settings.loadContext).each(function() {
-				images.push($(this).attr('src'));
-			});
-		}
+        for(var i=0; i<allItemsCount; i++) {
 
-		//Load background images when there are some
-		//TODO: Multiple backgrounds
-		if(settings.loadBackgroundImages) {
+            //Create the image object in memory to make sure the event hasn't already happened.
+            $("<img/>")
+                .on("load.imgLoader error.imgLoader", function(event) {
+                    itemsLoadedCount++;
+
+                    singleItemCallback(itemsLoadedCount / allItemsCount, imagesToLoad[i], event.type === 'load');
+
+                    if(itemsLoadedCount === allItemsCount) {
+                        allItemsCallback();
+                    }
+                })
+                .attr("src", imagesToLoad[i]);
+        }
+    };
+
+    ImgLoader.getImages = function() {
+
+        //Use as a hash to make sure an image with the same URL is not added twice
+        var images = {};
+
+        //Load <img> tags from the page
+        if(settings.loadImgTags) {
+            $('img[src!=""]', settings.loadContext).each(function() {
+                images[$(this).attr('src')] = '';
+            });
+        }
+
+        //Load background images from css when there are some
+        if(settings.loadBackgroundImages) {
+
+            //Regex pattern to match url('...')
+            var matchUrl = /url\(\s*(['"]?)(.*?)\1\s*\)/g;
+
 			$('*', settings.loadContext).each(function() {
-				var elmBg = $(this).css('background-image'),
-					bgUrl;
-				if(elmBg !== '' && elmBg !== 'none') {
-					bgUrl = elmBg.replace(/^url\(["']?/, '').replace(/["']?\)$/, '');
-					images.push(bgUrl);
-				}	
+                var elmBg = $(this).css('background-image'),
+                    match,
+                    bgUrl;
+
+                if(elmBg === '' || elmBg === 'none') {
+                    return;
+                }
+
+                //Needs to run in a loop for multiple backgrounds
+                while (match = matchUrl.exec(elmBg)) {
+
+                    //The first capturing group is only used for the \1 backreference (for the matching quotes)
+                    //Discard the first group and only care about the second
+                    bgUrl = match[2];
+
+                    //Ignore inline data images
+                    if(bgUrl.slice(0,5) !== 'data:') {
+                        images[bgUrl] = '';
+                    }
+                }
 			});
 		}
 
-		//Load extra items passed by the user. Should be an array but accept a single string too
+		//Load extra items passed by the user. 
 		if(settings.loadItems) {
+
 			var extraItems = settings.loadItems;
+
+            //Should be an array but accept a single string too
 			if (typeof extraItems == 'string' || extraItems instanceof String) {
 				extraItems = [ extraItems ];
 			}
+            
 			if (extraItems instanceof Array) {
 				for(var i=0; i<extraItems.length; i++) {
-					images.push(extraItems[i]);
+					images[extraItems[i]] = '';
 				}
 			}
 		}
