@@ -47,7 +47,7 @@
     ImgLoader.loadImages = function(options) {
         $.extend(settings, options);
 
-        var itemsLoaded = 0,
+        var itemsLoadedCount = 0,
             allItemsCount,
             singleItemCallback,
             allItemsCallback;
@@ -68,7 +68,7 @@
                 .on("load.imgLoader error.imgLoader", function(event) {
                     itemsLoadedCount++;
 
-                    singleItemCallback(itemsLoadedCount / allItemsCount, imagesToLoad[i], event.type === 'load');
+                    singleItemCallback(itemsLoadedCount / allItemsCount, event.target.src, event.type === 'load');
 
                     if(itemsLoadedCount === allItemsCount) {
                         allItemsCallback();
@@ -129,7 +129,7 @@
 			if (typeof extraItems == 'string' || extraItems instanceof String) {
 				extraItems = [ extraItems ];
 			}
-            
+
 			if (extraItems instanceof Array) {
 				for(var i=0; i<extraItems.length; i++) {
 					images[extraItems[i]] = '';
