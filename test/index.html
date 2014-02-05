@@ -16,12 +16,33 @@
     <!-- tests -->
     <script src="tests.js"></script>
 
+
+    <style>
+      .image-background div {background: transparent url('http://placehold.it/100x100') no-repeat 0 0;}
+      .multiple-background div {background-image : url('http://placehold.it/100x100'), url('http://placehold.it/200x200');}
+      .inline-background div {background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACEAAAAhCAYAAABX5MJvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyBpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBXaW5kb3dzIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjlGNEY0MDM4MjFFMjExRTJBN0M1REI3N0E0Mjg3NEY4IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjlGNEY0MDM5MjFFMjExRTJBN0M1REI3N0E0Mjg3NEY4Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6OUY0RjQwMzYyMUUyMTFFMkE3QzVEQjc3QTQyODc0RjgiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6OUY0RjQwMzcyMUUyMTFFMkE3QzVEQjc3QTQyODc0RjgiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4A7XJ2AAAD3klEQVR42rSYa0gUURTHz6yCtqKmqSRrmYWWFIoVu/OlhyUFthsYFBZaH0Qj0JBIyDD6YJlgVLhGoCiUi/QQhVYKwdIKYnc/FC09fNDDcknUFJV27YNsc65715mdfcxMdmCY4c5l72/+53HPXcbtdoNcs/TaEsHxSwufxgq9g5o1r0ETb2WP7n0j9/cYqRCWtqeHoMvSCbaRSGbeFXSue3/WAuRln2Mrj9xZEQiyeF1nD+OYlq2YO3oVQEX+NfZS0UXFEBb9ZRfzzB4J/2juLRpg3zYxsiEsOeVuZtABK2VElfbKJPagdlIShBKAmF1bIXr3NvL8Z3QCZsxWWJx1SgIRQcgFCItVQ8bDaojhAHDxxdnfoM5KI/efRjM4rj4QgbATHQLXhAsATjcOyFVgU8tZAvC5tBGmTP1kLGJ9ImhqCiGFu8JXR8FoVdvyV3OZhR/KjxEVP/eZe/175AAkFOVCnEEnACDu+D4JX8qMMN5khrXlBgIlkJ/7UEutqU4EwaXhhBwAdMOG6yXE93wAvo1duU/ucYd14pfGJ9UiCMY2IssN+IVhsZzU51sDzqGBifNEGYFuudV1xgvBl0aqCskVBphsfw5hnM8ze2tB5+qGneMm4iJq1A0YsH6t792NZSX67NVKVECfY2ZEZaeRuJh7+Z4EapxBu7SdcIGJWYIu81ukPIVQJdcVfBUSi/dBRGoSfDxQQ+Ji+Fg9OO1fPZBqiOdiAdPUt14IMvLRwHaV3MpHVZjiIPAZg89p/+YFRKhlkKV5QW3elaxCEiUqJHAqoNToEmqpDSXkju/pPEzXoMa1AyqlsYCu4EuNgHQMawfOc3hSNJSFK1EBF/FVAQHpWM5QszQVaJ2Q2gnxVaAwfBVwbPqxVbYKoE2/qfLubjJUIDBGswgQF8b9AlNVqgoQo/6h8tAsyFWBvwgdw60cs0OqCmRH5bb1JQiuHww22VcF/iJYIekYzkMV5l59kKZCXtawt1hhQxrIJdisBFOByo/lG/sIfrCGtAL2uHAXPZVrCjYf6z8WptGqVoEKVH58j+9mzDZprtCmA00KLwTbUFrsTw26+WAhGm/qEZRgvvw4ju8lW3n+DnE/gVZfrBdBcNKjAliINjZXkEzBC59RfsmpyFfhZO4LfmkQ95gn6oeYbmuGOEP03rJMzbejUtr++++2A4Bgf0A76nk5tSDE+SPwuSMAyP84AAXcwNiOC5vdt8v0oaqpJIDyfJOiE5hAlaqWdrjbXxTqICxavEA3jB+zYqdyAoONKfaFg2OR/g7IRLXMFKyEIQ/BiiH8/k8x51xH3KfgfwlqfwUYAIxfI3VUaGADAAAAAElFTkSuQmCC);}
+      .gradient-background div {background-image: linear-gradient(to bottom right, red, rgba(255,0,0,0));}
+    </style>
   </head>
   <body>
     <div>
       <div id="qunit"></div>
       <div id="qunit-fixture">
         
+          <div class="found"><img src="http://placehold.it/100x100" /></div>
+          <div class="not-found"><img src="http://example.com/404" /></div>
+          <div class="empty"><img src="" alt="empty" /></div>
+
+          <div class="image-background"><div></div></div>
+          <div class="multiple-background"><div></div></div>
+          <div class="inline-background"><div></div></div>
+          <div class="gradient-background"><div></div></div>
+
+          <div class="dupes">
+            <img src="http://placehold.it/100x100" />
+            <img src="http://placehold.it/100x100" />
+            <img src="http://placehold.it/100x100" />
+          </div>
 
       </div>
     </div>

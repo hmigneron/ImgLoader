@@ -1,29 +1,7 @@
-// Test <img> tag
-// Test empty src img tag
-// Test background image
-// Test multiple background
-// Test inline image (data)
-// Test background image with linear gradient or other invalid
-// Test extra items (array)
-// Test extra items (string)
-// Test dupes make sure not loaded twice
-
-//Test when image is loaded the callback has the source
-
-// <img id="found" src="" />
-// <img id="not-found" src="http://example.com/404" />
-// <img id="empty" />
-
-// <div id="image-background" class="image-background"></div>
-// <div id="multiple-background" class="multiple-background"></div>
-// <div id="inline-background" class="inline-background"></div>
-// <div id="gradient-background" class="gradient-background"></div>
-
 (function($) {
 
     var imgUrl = "http://placehold.it/100x100",
-        imgSecondUrl = "http://placehold.it/200x200",
-        imgNotFoundUrl = "http://example.com/404";
+        imgSecondUrl = "http://placehold.it/200x200";
 
     var contextSetup = {
 
@@ -44,7 +22,7 @@
     };
 
 
-    module('Ballbacks and selector context', contextSetup);
+    module('Callbacks and selector context', contextSetup);
     asyncTest("Items Completed callback called", function() {
         expect(1);
 
@@ -68,6 +46,7 @@
             },
             itemsCompletedCallback : function() {
                 start();
+
             }
         });
     });
@@ -109,5 +88,149 @@
         });
     });
 
+
+
+    var completeSetup = {
+
+        setup : function() {
+
+        },
+
+        teardown : function() {
+            
+        }
+    };
+
+    module('Image and background loading', completeSetup);
+    asyncTest("Found items load without error", function() {
+
+        expect(1);
+
+        ImgLoader.loadImages({
+            loadImgTags : true,
+            loadContext : '.found',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(loaded, "Image loaded properly");
+            },
+            itemsCompletedCallback : function() {
+                start();
+            }
+        });
+    });
+
+    asyncTest("Unfound items load with error", function() {
+
+        expect(1);
+
+        ImgLoader.loadImages({
+            loadImgTags : true,
+            loadContext : '.not-found',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(!loaded, "Image not found and triggered error");
+            },
+            itemsCompletedCallback : function() {
+                start();
+            }
+        });
+    });
+
+    asyncTest("Empty images do not trigger events", function() {
+
+        expect(1);
+
+        ImgLoader.loadImages({
+            loadImgTags : true,
+            loadContext : '.empty',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(false, "Event should not be triggered");
+            },
+            itemsCompletedCallback : function() {
+                ok(true, "Completed event triggered");
+                start();
+            }
+        });
+    });
+
+    asyncTest("CSS Background image is loaded", function() {
+
+        expect(1);
+
+        ImgLoader.loadImages({
+            loadBackgroundImages : true,
+            loadContext : '.image-background',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(true, "Background image loaded");
+            },
+            itemsCompletedCallback : function() {
+                start();
+            }
+        });
+    });
+
+    asyncTest("Multiple CSS Background images are loaded", function() {
+
+        expect(2);
+
+        ImgLoader.loadImages({
+            loadBackgroundImages : true,
+            loadContext : '.multiple-background',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(true, "Background image loaded");
+            },
+            itemsCompletedCallback : function() {
+                start();
+            }
+        });
+    });
+
+    asyncTest("Inline CSS Background images are not loaded", function() {
+
+        expect(1);
+
+        ImgLoader.loadImages({
+            loadBackgroundImages : true,
+            loadContext : '.inline-background',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(false, "Event should not be triggered");
+            },
+            itemsCompletedCallback : function() {
+                ok(true, "Completed event triggered");
+                start();
+            }
+        });
+    });
+
+    asyncTest("Gradient CSS Background images are not loaded", function() {
+
+        expect(1);
+
+        ImgLoader.loadImages({
+            loadBackgroundImages : true,
+            loadContext : '.gradient-background',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(false, "Event should not be triggered");
+            },
+            itemsCompletedCallback : function() {
+                ok(true, "Completed event triggered");
+                start();
+            }
+        });
+    });
+
+    asyncTest("Duplicate images are only loaded once", function() {
+        expect(2);
+
+        ImgLoader.loadImages({
+            loadBackgroundImages : true,
+            loadContext : '.dupes',
+            itemCompletedCallback : function(percentage, src, loaded) {
+                ok(true, "Item loaded event should be triggered once");
+            },
+            itemsCompletedCallback : function() {
+                ok(true, "Completed event triggered");
+                start();
+            }
+        });
+    });
 
 }(jQuery));
