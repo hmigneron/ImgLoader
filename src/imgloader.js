@@ -101,7 +101,7 @@
             //Regex pattern to match url('...')
             var matchUrl = /url\(\s*(['"]?)(.*?)\1\s*\)/g;
 
-			$('*', settings.loadContext).each(function() {
+            $('*', settings.loadContext).each(function() {
                 var elmBg = $(this).css('background-image'),
                     match,
                     bgUrl;
@@ -122,27 +122,27 @@
                         images[bgUrl] = '';
                     }
                 }
-			});
-		}
+            });
+        }
 
-		//Load extra items passed by the user. 
-		if(settings.loadItems) {
+        //Load extra items passed by the user. 
+        if(settings.loadItems) {
 
-			var extraItems = settings.loadItems;
+            var extraItems = settings.loadItems;
 
             //Should be an array but accept a single string too
-			if (typeof extraItems == 'string' || extraItems instanceof String) {
-				extraItems = [ extraItems ];
-			}
+            if (typeof extraItems == 'string' || extraItems instanceof String) {
+                extraItems = [ extraItems ];
+            }
 
-			if (extraItems instanceof Array) {
-				for(var i=0; i<extraItems.length; i++) {
-					images[extraItems[i]] = '';
-				}
-			}
-		}
+            if (extraItems instanceof Array) {
+                for(var i=0; i<extraItems.length; i++) {
+                    images[extraItems[i]] = '';
+                }
+            }
+        }
 
-		return images;
-	};
+        return images;
+    };
 
 })(window, jQuery, undefined);
