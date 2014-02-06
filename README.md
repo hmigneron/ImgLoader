@@ -33,7 +33,7 @@ By default, ImgLoader will load all <img> tags as well as all images coming from
 
 ####Examples
 
-**Using the callbacks : **
+**Using the callbacks** : 
 
 There are 2 callback functions that can be used to follow the progress of the images being loaded : 
 
