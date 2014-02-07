@@ -1,6 +1,6 @@
 #ImgLoader.js
 
-A simple way to pre-load images and get progress notification.
+A simple way to preload images and get progress notification.
 
 ImgLoader can load images from <img> tags, from CSS properties (through background-image) or simply images sent as parameters.
 
